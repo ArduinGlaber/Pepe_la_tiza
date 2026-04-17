@@ -34,13 +34,15 @@ curl -sL https://raw.githubusercontent.com/ArduinGlaber/Pepe_la_tiza/main/script
 ```bash
 # Clonar el repo
 git clone https://github.com/ArduinGlaber/Pepe_la_tiza.git
+cd Pepe_la_tiza
 
-# Copiar el agente principal a tu directorio de agentes
+# Instalar todo
 cp agents/pepe_la_tiza.md ~/.opencode/agents/
-
-# Copiar los agentes internos (fuera de agents/ para que estén ocultos)
-mkdir -p ~/.opencode/.team
-cp agents/.team/* ~/.opencode/.team/
+mkdir -p ~/.opencode/.team ~/.opencode/bin ~/.opencode/templates
+cp .team/* ~/.opencode/.team/
+cp bin/workflow-status ~/.opencode/bin/
+chmod +x ~/.opencode/bin/workflow-status
+cp templates/* ~/.opencode/templates/
 ```
 
 ## Uso
@@ -52,78 +54,69 @@ cp agents/.team/* ~/.opencode/.team/
 
 2. O simplemente empieza a conversar — Pepe_la_tiza detectará cuando necesite delegar.
 
-## Workflow
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                        USER                             │
-│                    (vos, solo vos)                      │
-└─────────────────────────┬───────────────────────────────┘
-                          │
-                          ▼
-              ┌───────────────────────┐
-              │    Pepe_la_tiza        │
-              │  (meta-agente)        │
-              └───────────┬───────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        │                 │                 │
-        ▼                 ▼                 ▼
-   ┌─────────┐      ┌─────────┐      ┌─────────┐
-   │ planner │ ──►  │ builder │ ──►  │verifier │
-   └─────────┘      └─────────┘      └─────────┘
-        │                 │                 │
-        ▼                 ▼                 │
-   ┌─────────┐      ┌─────────┐            │
-   │ jester  │      │bug-fixer│ ◄──────────┘
-   └─────────┘      └─────────┘
-        │
-        ▼
-   ┌─────────────┐
-   │memory-keeper│
-   └─────────────┘
-```
+3. Al iniciar, Pepe_la_tiza ejecuta `workflow-status` automáticamente para mostrar el estado del proyecto.
 
 ## Comandos
 
 | Comando | Qué hace Pepe_la_tiza |
 |---------|----------------------|
-| `hola`, `hi` | Se presenta y carga contexto |
+| `hola`, `hi` | Se presenta, ejecuta workflow-status y carga contexto |
 | `plan <tarea>` | Genera un plan detallado |
 | `hazlo` | Ejecuta el plan paso a paso |
-| `status` | Muestra estado del proyecto |
+| `status` | Ejecuta workflow-status para mostrar estado actual |
 | `revisá` | Invoca al jester para cuestionar |
-| `memo` | Busca lecciones guardadas |
+| `memo` | Busca lecciones guardadas del proyecto |
 | `arrepentite` | Cancela el trabajo en curso |
 
-## Para desarrolladores
+## Herramientas
 
-### Estructura del proyecto
+### workflow-status
+
+Dashboard CLI para ver el estado del proyecto.
+
+```bash
+workflow-status                    # Estado del proyecto actual
+workflow-status ./mi-proyecto      # Proyecto específico
+workflow-status --engram           # Incluye stats de Engram
+workflow-status --verbose          # Muestra tareas completadas
+```
+
+## Estructura del proyecto
 
 ```
 Pepe_la_tiza/
 ├── agents/
 │   └── pepe_la_tiza.md      # Meta-agente principal (visible en opencode)
-├── .team/                    # Agentes internos (fuera de agents/, ocultos)
+├── .team/                    # Agentes internos (ocultos)
 │   ├── planner.md
 │   ├── builder.md
 │   ├── verifier.md
 │   ├── jester.md
 │   ├── bug-fixer.md
 │   └── memory-keeper.md
+├── bin/
+│   └── workflow-status       # CLI dashboard de estado
+├── templates/
+│   ├── todo-template.md      # Template para tasks/todo.md
+│   └── lessons-template.md   # Template para tasks/lessons.md
 ├── scripts/
 │   └── install.sh            # Script de instalación
 └── README.md
 ```
 
-**Nota**: Los agentes en `.team/` están fuera del directorio `agents/` de opencode, por lo que no aparecen en la lista de agentes. Solo `pepe_la_tiza` es visible, pero puede invocar los internos transparentemente.
+## Estructura instalada
 
-### Agregar nuevos agentes internos
-
-1. Crear el agente en `.team/nuevo-agente.md`
-2. Definir su rol y comportamiento
-3. Actualizar `pepe_la_tiza.md` para que lo invoque
-4. Pull request bienvenido
+```
+~/.opencode/
+├── agents/
+│   └── pepe_la_tiza.md      # Meta-agente principal
+├── .team/                    # Agentes internos (ocultos de opencode)
+├── bin/
+│   └── workflow-status       # CLI dashboard
+└── templates/               # Templates para proyectos
+    ├── todo-template.md
+    └── lessons-template.md
+```
 
 ## Créditos
 

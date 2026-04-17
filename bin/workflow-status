@@ -1,0 +1,232 @@
+#!/bin/bash
+# workflow-status — Gentleman AI Stack Workflow Dashboard
+# Uso: workflow-status [proyecto]
+#        workflow-status --help
+#        workflow-status --engram [proyecto]
+
+set -e
+
+# Colores con tput
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+CYAN=$(tput setaf 6)
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+# Help
+show_help() {
+    cat << 'HELP'
+workflow-status — Gentleman AI Stack Workflow Dashboard
+
+USO
+    workflow-status [opciones] [proyecto]
+
+ARGUMENTOS
+    proyecto    Directorio del proyecto (default: .)
+
+OPCIONES
+    -h, --help          Muestra esta ayuda
+    -e, --engram        Muestra stats de Engram
+    -v, --verbose       Modo verboso
+
+EJEMPLOS
+    workflow-status                    # Usa directorio actual
+    workflow-status ./mi-proyecto      # Proyecto específico
+    workflow-status --engram           # Incluye stats de Engram
+    workflow-status -e ~/projects/app # Combinar opciones
+
+ARCHIVOS BUSCADOS
+    tasks/todo.md       Plan activo
+    tasks/lessons.md    Lecciones aprendidas
+
+MAS INFO
+    https://github.com/gentleman-ai/workflow
+HELP
+}
+
+# Parsear argumentos
+ENGRAM=false
+VERBOSE=false
+PROJECT="."
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -e|--engram)
+            ENGRAM=true
+            shift
+            ;;
+        -v|--verbose)
+            VERBOSE=true
+            shift
+            ;;
+        -*)
+            echo "Opción desconocida: $1"
+            show_help
+            exit 1
+            ;;
+        *)
+            PROJECT="$1"
+            shift
+            ;;
+    esac
+done
+
+# Banner
+echo "${BOLD}${BLUE}╔═══════════════════════════════════════════╗${RESET}"
+echo "${BOLD}${BLUE}║  Gentleman AI Stack — Workflow Status  ║${RESET}"
+echo "${BOLD}${BLUE}╚═══════════════════════════════════════════╝${RESET}"
+echo ""
+
+# Buscar archivos
+TODO_FILE=$(find "$PROJECT" -name "todo.md" -not -path "*/node_modules/*" 2>/dev/null | head -1)
+LESSONS_FILE=$(find "$PROJECT" -name "lessons.md" -not -path "*/node_modules/*" 2>/dev/null | head -1)
+
+# Si no hay todo.md
+if [ -z "$TODO_FILE" ]; then
+    echo "${YELLOW}⚠ No se encontró tasks/todo.md${RESET}"
+    echo ""
+    echo "   Para crear uno:"
+    echo "   ${CYAN}cp /root/tasks/todo-template.md tu-proyecto/tasks/todo.md${RESET}"
+    echo ""
+    # Sugerir crear estructura
+    if [ "$PROJECT" = "." ] || [ "$PROJECT" = "$HOME" ]; then
+        echo "${BOLD}┌─ Quick Start ─────────────────────────────┐${RESET}"
+        echo "${BOLD}│${RESET} mkdir -p tasks"
+        echo "${BOLD}│${RESET} cp /root/tasks/todo-template.md tasks/todo.md"
+        echo "${BOLD}└─────────────────────────────────────────┘${RESET}"
+    fi
+    exit 0
+fi
+
+# Mostrar plan
+echo "${BOLD}📋 Plan:${RESET} ${TODO_FILE}"
+
+# Extraer nombre del plan
+PLAN_NAME=$(grep "^# Plan:" "$TODO_FILE" | head -1 | sed 's/# Plan: //' || echo "Plan sin nombre")
+PLAN_DATE=$(grep "^**Fecha:**" "$TODO_FILE" | head -1 | sed 's/\*\*Fecha:\*\* //' || echo "Sin fecha")
+PLAN_STATUS=$(grep "^**Estado:**" "$TODO_FILE" | head -1 | sed 's/\*\*Estado:\*\* //' || echo "?")
+
+# Color del estado
+case "$PLAN_STATUS" in
+    *"Completado"*|*completado*)
+        STATUS_COLOR="${GREEN}✓ Completado${RESET}"
+        ;;
+    *"Bloqueado"*|*bloqueado*)
+        STATUS_COLOR="${RED}✗ Bloqueado${RESET}"
+        ;;
+    *)
+        STATUS_COLOR="${YELLOW}⏳ En progreso${RESET}"
+        ;;
+esac
+
+echo "   ${CYAN}${PLAN_NAME}${RESET}"
+echo "   Fecha: ${PLAN_DATE} | Estado: ${STATUS_COLOR}"
+echo ""
+
+# Contar items
+TOTAL=$(grep -c "^- \[ \]" "$TODO_FILE" 2>/dev/null | tr -d '\n' || echo "0")
+DONE=$(grep -c "^- \[x\]" "$TODO_FILE" 2>/dev/null | tr -d '\n' || echo "0")
+IN_PROGRESS=$(grep -c "^- \[~\]" "$TODO_FILE" 2>/dev/null | tr -d '\n' || echo "0")
+
+# Calcular porcentaje
+if [ "$TOTAL" -gt 0 ] || [ "$DONE" -gt 0 ]; then
+    TOTAL_WITH_DONE=$((TOTAL + DONE))
+    if [ "$TOTAL_WITH_DONE" -gt 0 ]; then
+        PCT=$((DONE * 100 / TOTAL_WITH_DONE))
+    else
+        PCT=0
+    fi
+else
+    PCT=0
+fi
+
+# Barra de progreso visual
+PROGRESS_BAR=""
+for i in {1..10}; do
+    if [ $((i * 10)) -le "$PCT" ]; then
+        PROGRESS_BAR="${PROGRESS_BAR}${GREEN}█${RESET}"
+    else
+        PROGRESS_BAR="${PROGRESS_BAR}░"
+    fi
+done
+
+echo "${BOLD}┌─ Progreso ────────────────────────────────┐${RESET}"
+echo "${BOLD}│${RESET} Completados: ${GREEN}${DONE}${RESET}  En progreso: ${YELLOW}${IN_PROGRESS}${RESET}  Pendientes: ${TOTAL}"
+echo "${BOLD}│${RESET} ${PROGRESS_BAR} ${PCT}%${RESET}"
+echo "${BOLD}└─────────────────────────────────────────┘${RESET}"
+echo ""
+
+# Mostrar items
+echo "${BOLD}📌 Tareas:${RESET}"
+
+# Items en progreso
+IN_PROG_ITEMS=$(grep -n "^- \[~\]" "$TODO_FILE" 2>/dev/null || true)
+if [ -n "$IN_PROG_ITEMS" ]; then
+    echo "   ${YELLOW}⏳ En progreso:${RESET}"
+    echo "$IN_PROG_ITEMS" | while IFS=: read -r num line; do
+        task=$(echo "$line" | sed 's/^- \[~\] //')
+        echo "     ${num}. ${task}"
+    done
+fi
+
+# Items pendientes
+PENDING=$(grep -n "^- \[ \]" "$TODO_FILE" 2>/dev/null || true)
+if [ -n "$PENDING" ]; then
+    echo "   ${YELLOW}○ Pendientes:${RESET}"
+    echo "$PENDING" | while IFS=: read -r num line; do
+        task=$(echo "$line" | sed 's/^- \[ \] //')
+        echo "     ${num}. ${task}"
+    done
+fi
+
+# Items completados
+if [ "$VERBOSE" = true ]; then
+    COMPLETED=$(grep -n "^- \[x\]" "$TODO_FILE" 2>/dev/null || true)
+    if [ -n "$COMPLETED" ]; then
+        echo "   ${GREEN}✓ Completados:${RESET}"
+        echo "$COMPLETED" | while IFS=: read -r num line; do
+            task=$(echo "$line" | sed 's/^- \[x\] //')
+            echo "     ${num}. ${task}"
+        done
+    fi
+fi
+echo ""
+
+# Lecciones
+if [ -n "$LESSONS_FILE" ] && [ -f "$LESSONS_FILE" ]; then
+    LESSON_COUNT=$(grep -c "^### 20" "$LESSONS_FILE" 2>/dev/null || echo "0")
+    echo "${BOLD}📚 Lecciones:${RESET}"
+    echo "   ${LESSON_COUNT} lecciones en ${LESSONS_FILE}"
+    
+    if [ "$LESSON_COUNT" -gt 0 ]; then
+        LAST_LESSON=$(grep -A1 "^### 20" "$LESSONS_FILE" | tail -2 | head -1 | sed 's/^### //' || echo "")
+        if [ -n "$LAST_LESSON" ]; then
+            echo "   Última: ${CYAN}${LAST_LESSON}${RESET}"
+        fi
+    fi
+    echo ""
+fi
+
+# Engram stats
+if [ "$ENGRAM" = true ]; then
+    echo "${BOLD}🧠 Engram Memory:${RESET}"
+    ENGRAM_DIR="${HOME}/.engram"
+    if [ -d "$ENGRAM_DIR" ]; then
+        OBS_COUNT=$(find "$ENGRAM_DIR" -name "*.db" -o -name "*.json" 2>/dev/null | wc -l || echo "?")
+        echo "   Observations disponibles: ${CYAN}${OBS_COUNT}${RESET}"
+        echo "   Comando: ${CYAN}mem_search(query: \"workflow\") ${RESET}para buscar"
+    else
+        echo "   ${YELLOW}Engram no configurado${RESET}"
+    fi
+    echo ""
+fi
+
+# Footer
+echo "${BOLD}${BLUE}═══════════════════════════════════════════${RESET}"
+echo "   ${CYAN}workflow-status${RESET} — ${BOLD}Use --help para más opciones${RESET}"
