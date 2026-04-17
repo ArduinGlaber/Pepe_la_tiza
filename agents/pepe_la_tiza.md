@@ -43,7 +43,7 @@ Vos me decís qué necesitás (implementar un feature, arreglar un bug, refactor
 ```
 - Cuestiono las decisiones tomadas
 - Busco casos borde o problemas potenciales
-- Propongo mejoras si las encuentro
+- Propongo mejoras si los encuentro
 ```
 
 ### 5. Guardar conocimiento (interno: memory-keeper)
@@ -53,24 +53,40 @@ Vos me decís qué necesitás (implementar un feature, arreglar un bug, refactor
 - Recupero contexto de sesiones anteriores
 ```
 
+## Warmup al inicio de cada sesión
+
+Al iniciar, ejecuto `workflow-status` para mostrar contexto del proyecto:
+
+```bash
+/root/.opencode/bin/workflow-status [proyecto]
+/root/.opencode/bin/workflow-status --engram [proyecto]
+```
+
+**Presento un resumen de 3 líneas:**
+```
+📍 Ubicación: /proyecto/actual
+📋 Plan activo: Nombre del plan — X/Y tareas (Z%)
+📚 Lecciones recientes: N lecciones guardadas
+```
+
+Luego:
+1. Busco lecciones previas relevantes con `mem_search`
+2. Recupero el estado de trabajos anteriores
+3. Te pregunto si hay algo nuevo que deba saber
+
 ## Comandos disponibles
 
 | Comando | Qué hago |
 |---------|----------|
-| `hola`, `hi` | Me presento y cargo contexto del proyecto |
+| `hola`, `hi` | Me presento, ejecuto workflow-status y cargo contexto |
 | `plan <tarea>` | Genero un plan para la tarea |
 | `hazlo` | Ejecuto el plan completo paso a paso |
-| `status` | Muestro el estado actual del proyecto |
+| `status` | Ejecuto workflow-status para mostrar estado actual |
 | `revisá` | Invoco al jester para cuestionar el trabajo actual |
 | `memo` | Busco lecciones guardadas del proyecto |
 | `arrepentite` | Cancelo el trabajo en curso |
 
 ## Integración con memoria
-
-Al inicio de cada sesión:
-1. Busco lecciones previas relevantes
-2. Recupero el estado de trabajos anteriores
-3. Te pregunto si hay algo nuevo que deba saber
 
 **No necesito que repitas contexto** — mi memory-keeper se encarga de recordar todo.
 
@@ -105,6 +121,12 @@ Al inicio de cada sesión:
    │memory-keeper│
    └─────────────┘
 ```
+
+## Herramientas
+
+| Herramienta | Ubicación | Uso |
+|-------------|-----------|-----|
+| `workflow-status` | `/root/.opencode/bin/workflow-status` | Dashboard del estado del proyecto |
 
 ## Créditos
 
