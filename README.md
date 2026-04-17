@@ -75,6 +75,38 @@ cp templates/* ~/.opencode/templates/
 | `memo` | Busca lecciones guardadas del proyecto |
 | `arrepentite` | Cancela el trabajo en curso |
 
+## Skills técnicos
+
+Pepe_la_tiza carga skills automáticamente según el contexto del proyecto.
+
+### Skills propios (incluidos)
+
+| Skill | Cuándo lo cargo |
+|-------|-----------------|
+| `python-senior` | Código Python avanzado, async, type hints, patrones senior |
+| `python-pyqt6` | Apps de escritorio con interfaz gráfica |
+| `python-pygame` | Juegos 2D, desarrollo de games |
+
+### Gentle AI Stack (opcional)
+
+Si está instalado en `~/.opencode/skills/gentleman/`, Pepe_la_tiza puede usar sus skills:
+
+| Skill | Para qué |
+|-------|----------|
+| `angular-core` | Componentes Angular, signals, zoneless |
+| `angular-architecture` | Estructura de proyectos Angular |
+| `react-19` | Componentes React 19 |
+| `tailwind-4` | Estilos con Tailwind CSS |
+| `typescript` | TypeScript strict patterns |
+| `django-drf` | APIs REST con Django |
+| `playwright` | Tests E2E |
+| `pytest` | Tests Python |
+
+Para instalar Gentle AI Stack:
+```bash
+git clone https://github.com/alanf/gentle-ai-stack.git ~/.opencode/skills/gentleman
+```
+
 ## Herramientas
 
 ### workflow-status
@@ -93,7 +125,7 @@ workflow-status --verbose          # Muestra tareas completadas
 ```
 Pepe_la_tiza/
 ├── agents/
-│   └── pepe_la_tiza.md      # Meta-agente principal (visible en opencode)
+│   └── pepe_la_tiza.md      # Meta-agente principal
 ├── .team/                    # Agentes internos (ocultos)
 │   ├── planner.md
 │   ├── builder.md
@@ -101,13 +133,17 @@ Pepe_la_tiza/
 │   ├── jester.md
 │   ├── bug-fixer.md
 │   └── memory-keeper.md
+├── skills/
+│   └── python/              # Skills propios de Pepe_la_tiza
+│       ├── pyqt6/
+│       └── pygame/
 ├── bin/
 │   └── workflow-status       # CLI dashboard de estado
 ├── templates/
-│   ├── todo-template.md      # Template para tasks/todo.md
-│   └── lessons-template.md   # Template para tasks/lessons.md
+│   ├── todo-template.md
+│   └── lessons-template.md
 ├── scripts/
-│   └── install.sh            # Script de instalación
+│   └── install.sh
 └── README.md
 ```
 
@@ -117,12 +153,14 @@ Pepe_la_tiza/
 ~/.opencode/
 ├── agents/
 │   └── pepe_la_tiza.md      # Meta-agente principal
-├── .team/                    # Agentes internos (ocultos de opencode)
+├── .team/                    # Agentes internos (ocultos)
 ├── bin/
 │   └── workflow-status       # CLI dashboard
-└── templates/               # Templates para proyectos
-    ├── todo-template.md
-    └── lessons-template.md
+├── templates/
+│   ├── todo-template.md
+│   └── lessons-template.md
+└── skills/                   # (opcional) Gentle AI Stack
+    └── gentleman/
 ```
 
 ## Créditos
