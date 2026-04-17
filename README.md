@@ -2,13 +2,20 @@
 
 > El meta-agente que orquesta un equipo completo de agentes especializados.
 
-**Sello Gentleman** — Desarrollado con la filosofía de [Alan Buscaglia](https://github.com/alanf)
+**Sello Gentleman** — Inspirado en la filosofía de [Alan Buscaglia](https://github.com/alanf)
 
 ---
 
 ## ¿Qué es Pepe_la_tiza?
 
 Pepe_la_tiza es un **meta-agente de IA** que actúa como tu único punto de contacto con un equipo completo de agentes especializados. Vos solo conversás con Pepe_la_tiza — él se encarga de coordinar todo lo demás.
+
+### Dependencias
+
+- **OpenCode** — Base del runtime
+- **Engram** — Memoria persistente (mem_save, mem_search, mem_context)
+
+> ⚠️ **No necesita** el Gentle AI Stack completo. Solo Engram como sistema de memoria.
 
 ### El equipo interno
 
@@ -120,8 +127,8 @@ Pepe_la_tiza/
 
 ## Créditos
 
-- **Sello Gentleman**: [Alan Buscaglia](https://github.com/alanf)
-- Inspirado en el [Gentle AI Stack](https://github.com/alanf/gentle-ai-stack)
+- **Filosofía**: [Alan Buscaglia](https://github.com/alanf) — Sello Gentleman
+- Pepe_la_tiza usa la filosofía de Alan pero es **standalone**: solo necesita OpenCode + Engram
 
 ## Licencia
 
