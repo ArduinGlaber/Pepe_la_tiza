@@ -6,7 +6,7 @@
 set -e
 
 INSTALL_DIR="${HOME}/.opencode/agents"
-INTERNAL_DIR="${INSTALL_DIR}/internal"
+INTERNAL_DIR="${INSTALL_DIR}/.internal"
 
 echo "🎭 Instalando Pepe_la_tiza..."
 
@@ -34,13 +34,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -d "${SCRIPT_DIR}/../agents" ]; then
     echo "📁 Usando archivos locales..."
     cp "${SCRIPT_DIR}/../agents/pepe_la_tiza.md" "${INSTALL_DIR}/"
-    cp -r "${SCRIPT_DIR}/../agents/internal/"* "${INTERNAL_DIR}/"
+    cp -r "${SCRIPT_DIR}/../agents/.internal/"* "${INTERNAL_DIR}/"
 else
     echo "🌐 Descargando del repositorio..."
     TEMP_DIR=$(mktemp -d)
     git clone --depth 1 https://github.com/ArduinGlaber/Pepe_la_tiza.git "${TEMP_DIR}"
     cp "${TEMP_DIR}/agents/pepe_la_tiza.md" "${INSTALL_DIR}/"
-    cp -r "${TEMP_DIR}/agents/internal/"* "${INTERNAL_DIR}/"
+    cp -r "${TEMP_DIR}/agents/.internal/"* "${INTERNAL_DIR}/"
     rm -rf "${TEMP_DIR}"
 fi
 
@@ -52,3 +52,4 @@ echo "  1. Ejecuta /agent pepe_la_tiza"
 echo "  2. O simplemente empieza a chatear"
 echo ""
 echo "Ubicación: ${INSTALL_DIR}/pepe_la_tiza.md"
+echo "Agentes internos: ${INTERNAL_DIR}/"

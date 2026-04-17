@@ -36,11 +36,11 @@ curl -sL https://raw.githubusercontent.com/ArduinGlaber/Pepe_la_tiza/main/script
 git clone https://github.com/ArduinGlaber/Pepe_la_tiza.git
 
 # Copiar el agente principal a tu directorio de agentes
-cp -r agents/pepe_la_tiza.md ~/.opencode/agents/
+cp agents/pepe_la_tiza.md ~/.opencode/agents/
 
-# Copiar los agentes internos
-mkdir -p ~/.opencode/agents/internal
-cp -r agents/internal/* ~/.opencode/agents/internal/
+# Copiar los agentes internos (ocultos)
+mkdir -p ~/.opencode/agents/.internal
+cp agents/.internal/* ~/.opencode/agents/.internal/
 ```
 
 ## Uso
@@ -103,9 +103,9 @@ cp -r agents/internal/* ~/.opencode/agents/internal/
 ```
 Pepe_la_tiza/
 ├── agents/
-│   ├── pepe_la_tiza.md      # Meta-agente principal
-│   └── internal/
-│       ├── planner.md       # Agentes internos
+│   ├── pepe_la_tiza.md      # Meta-agente principal (visible)
+│   └── .internal/           # Agentes internos (ocultos de opencode)
+│       ├── planner.md
 │       ├── builder.md
 │       ├── verifier.md
 │       ├── jester.md
@@ -116,9 +116,11 @@ Pepe_la_tiza/
 └── README.md
 ```
 
+**Nota**: Los agentes en `.internal/` están ocultos de la lista de agentes de opencode. Solo `pepe_la_tiza` es visible, pero puede invocar los internos transparentemente.
+
 ### Agregar nuevos agentes internos
 
-1. Crear el agente en `agents/internal/nuevo-agente.md`
+1. Crear el agente en `agents/.internal/nuevo-agente.md`
 2. Definir su rol y comportamiento
 3. Actualizar `pepe_la_tiza.md` para que lo invoque
 4. Pull request bienvenido
