@@ -38,9 +38,9 @@ git clone https://github.com/ArduinGlaber/Pepe_la_tiza.git
 # Copiar el agente principal a tu directorio de agentes
 cp agents/pepe_la_tiza.md ~/.opencode/agents/
 
-# Copiar los agentes internos (ocultos)
-mkdir -p ~/.opencode/agents/.internal
-cp agents/.internal/* ~/.opencode/agents/.internal/
+# Copiar los agentes internos (fuera de agents/ para que estén ocultos)
+mkdir -p ~/.opencode/.team
+cp agents/.team/* ~/.opencode/.team/
 ```
 
 ## Uso
@@ -103,24 +103,24 @@ cp agents/.internal/* ~/.opencode/agents/.internal/
 ```
 Pepe_la_tiza/
 ├── agents/
-│   ├── pepe_la_tiza.md      # Meta-agente principal (visible)
-│   └── .internal/           # Agentes internos (ocultos de opencode)
-│       ├── planner.md
-│       ├── builder.md
-│       ├── verifier.md
-│       ├── jester.md
-│       ├── bug-fixer.md
-│       └── memory-keeper.md
+│   └── pepe_la_tiza.md      # Meta-agente principal (visible en opencode)
+├── .team/                    # Agentes internos (fuera de agents/, ocultos)
+│   ├── planner.md
+│   ├── builder.md
+│   ├── verifier.md
+│   ├── jester.md
+│   ├── bug-fixer.md
+│   └── memory-keeper.md
 ├── scripts/
-│   └── install.sh           # Script de instalación
+│   └── install.sh            # Script de instalación
 └── README.md
 ```
 
-**Nota**: Los agentes en `.internal/` están ocultos de la lista de agentes de opencode. Solo `pepe_la_tiza` es visible, pero puede invocar los internos transparentemente.
+**Nota**: Los agentes en `.team/` están fuera del directorio `agents/` de opencode, por lo que no aparecen en la lista de agentes. Solo `pepe_la_tiza` es visible, pero puede invocar los internos transparentemente.
 
 ### Agregar nuevos agentes internos
 
-1. Crear el agente en `agents/.internal/nuevo-agente.md`
+1. Crear el agente en `.team/nuevo-agente.md`
 2. Definir su rol y comportamiento
 3. Actualizar `pepe_la_tiza.md` para que lo invoque
 4. Pull request bienvenido
