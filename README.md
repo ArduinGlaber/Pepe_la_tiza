@@ -1,8 +1,53 @@
 # Pepe_la_tiza 🤹
 
+> **Release 1.0** — Meta-agente cross-platform con tests completos.
+
 > El meta-agente que orquesta un equipo completo de agentes especializados.
 
 **Sello Gentleman** — Inspirado en la filosofía de [Alan Buscaglia](https://github.com/alanf)
+
+---
+
+## Release 1.0 (2026-04)
+
+### Nuevo en esta release
+
+- ✅ **workflow-status.py** — Dashboard rewrite en Python (Windows compatible)
+- ✅ **install.py** — Installer cross-platform (Windows + Unix)
+- ✅ **Test suite** — 16 tests validando estructura y flujo
+- ✅ **agents.json** — Config de sub-agentes para OpenCode
+- ✅ **Skills Python** — 900+ líneas de contenido real
+- ⚠️ **Delegación** — Requiere configurar `task_budget` en `opencode.json`
+
+### Estructura actual
+
+```
+Pepe_la_tiza/
+├── agents/
+│   ├── pepe_la_tiza.md      # Agente principal
+│   └── .team/              # 6 sub-agentes
+│       ├── planner.md
+│       ├── builder.md
+│       ├── verifier.md
+│       ├── jester.md
+│       ├── bug-fixer.md
+│       └── memory-keeper.md
+├── bin/
+│   ├── workflow-status.py  # Dashboard (Python)
+│   └── install.py          # Installer
+├── scripts/
+│   └── test_pepe.py       # Test suite
+├── skills/python/         # Skills Python (~900 líneas)
+│   ├── senior/
+│   ├── pyqt6/
+│   └── pygame/
+├── templates/
+│   ├── todo-template.md
+│   └── lessons-template.md
+└── .opencode/
+    ├── agents.json         # Config de sub-agentes
+    └── README.md          # Docs de arquitectura
+```
 
 ---
 
@@ -28,15 +73,27 @@ Pepe_la_tiza es un **meta-agente de IA** que actúa como tu único punto de cont
 | `bug-fixer` | Arregla bugs de forma autónoma |
 | `memory-keeper` | Guarda y recupera lecciones del proyecto |
 
-## Instalación
+## Instalación (Release 1.0)
 
-### Opción 1: Script rápido (recomendado)
+### Opción 1: Python installer (recomendado, cross-platform)
+
+```bash
+# Windows
+python bin/install.py
+
+# Unix/Linux/Mac
+python bin/install.py
+# o
+chmod +x bin/install.py && ./bin/install.py
+```
+
+### Opción 2: Bash installer (Unix)
 
 ```bash
 curl -sL https://raw.githubusercontent.com/ArduinGlaber/Pepe_la_tiza/main/scripts/install.sh | bash
 ```
 
-### Opción 2: Manual
+### Opción 3: Manual
 
 ```bash
 # Clonar el repo

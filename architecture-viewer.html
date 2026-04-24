@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepe_la_tiza — Arquitectura</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --accent-green: #22c55e;
+            --accent-green-dim: rgba(34, 197, 94, 0.15);
+            --accent-blue: #3b82f6;
+            --accent-blue-dim: rgba(59, 130, 246, 0.15);
+            --accent-pink: #ec4899;
+            --accent-pink-dim: rgba(236, 72, 153, 0.15);
+            --accent-yellow: #eab308;
+            --accent-yellow-dim: rgba(234, 179, 8, 0.15);
+            --accent-purple: #a855f7;
+            --accent-purple-dim: rgba(168, 85, 247, 0.15);
+            --accent-orange: #f97316;
+            --accent-orange-dim: rgba(249, 115, 22, 0.15);
+            
+            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 24px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 64px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+        
+        /* Stats Grid */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            transition: all 200ms var(--ease-out);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            margin-bottom: 4px;
+        }
+        
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 48px;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--accent-green);
+            border-radius: 2px;
+        }
+        
+        /* Diagram Card */
+        .diagram-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            overflow: hidden;
+        }
+        
+        .mermaid {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 24px;
+            overflow-x: auto;
+        }
+        
+        .mermaid:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+        
+        /* Agent Grid */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        .agent-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 200ms var(--ease-out);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+        }
+        
+        .agent-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        
+        .agent-card.planner::before { background: var(--accent-blue); }
+        .agent-card.builder::before { background: var(--accent-pink); }
+        .agent-card.verifier::before { background: var(--accent-blue); }
+        .agent-card.jester::before { background: var(--accent-yellow); }
+        .agent-card.bug-fixer::before { background: var(--accent-orange); }
+        .agent-card.memory::before { background: var(--accent-purple); }
+        .agent-card.main::before { background: var(--accent-green); }
+        
+        .agent-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .agent-card h3 .icon {
+            font-size: 1.25rem;
+        }
+        
+        .agent-card .role {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+        
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .tools span {
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+        
+        .tools span.active {
+            background: var(--accent-green-dim);
+            color: var(--accent-green);
+        }
+        
+        /* File Tree */
+        .file-tree {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+        
+        .file-tree .folder {
+            color: var(--accent-blue);
+        }
+        
+        .file-tree .file {
+            color: var(--text-secondary);
+        }
+        
+        .file-tree .nested {
+            padding-left: 24px;
+            border-left: 1px solid var(--border);
+            margin-left: 8px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        
+        .footer a {
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            body { padding: 24px 16px; }
+            .header h1 { font-size: 1.75rem; }
+            .diagram-card { padding: 20px; }
+            .stat-card { padding: 16px; }
+            .stat-card .number { font-size: 1.75rem; }
+        }
+        
+        /* Animation */
+        @media (prefers-reduced-motion: no-preference) {
+            .stat-card, .agent-card {
+                transition: all 200ms var(--ease-out);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <span class="badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+                Release 1.0
+            </span>
+            <h1>Pepe_la_tiza</h1>
+            <p>Meta-agente que orquesta un equipo completo de agentes especializados</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">7</div>
+                <div class="label">Agentes</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">16</div>
+                <div class="label">Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">Skills</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">~900</div>
+                <div class="label">Lineas de Codigo</div>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">Arquitectura de Componentes</h2>
+            <div class="diagram-card">
+                <div class="mermaid">
+flowchart TB
+    subgraph User["Usuario"]
+        U["/agent pepe_la_tiza"]
+    end
+    
+    subgraph Core["Core"]
+        PT["pepe_la_tiza<br/><small>mode: primary</small>"]
+    end
+    
+    subgraph Team["Equipo Interno"]
+        PL["planner<br/><small>Planifica</small>"]
+        BU["builder<br/><small>Ejecuta</small>"]
+        VE["verifier<br/><small>Verifica</small>"]
+        JE["jester<br/><small>Cuestiona</small>"]
+        BF["bug-fixer<br/><small>Arregla bugs</small>"]
+        MK["memory-keeper<br/><small>Memoria</small>"]
+    end
+    
+    subgraph Storage["Almacenamiento"]
+        TD["tasks/todo.md"]
+        LM["tasks/lessons.md"]
+        EN["Engram"]
+    end
+    
+    U --> PT
+    PT <--> PL
+    PT <--> BU
+    PT <--> VE
+    PT <--> JE
+    PT <--> BF
+    PT <--> MK
+    
+    PL --- TD
+    BU --- TD
+    VE --- TD
+    MK --- EN
+    MK --- LM
+    
+    style PT fill:#22c55e,color:#000,stroke:#16a34a,stroke-width:3px
+    style PL fill:#3b82f6,color:#fff,stroke:#2563eb,stroke-width:2px
+    style BU fill:#ec4899,color:#fff,stroke:#db2777,stroke-width:2px
+    style VE fill:#3b82f6,color:#fff,stroke:#2563eb,stroke-width:2px
+    style JE fill:#eab308,color:#000,stroke:#ca8a04,stroke-width:2px
+    style BF fill:#f97316,color:#fff,stroke:#ea580c,stroke-width:2px
+    style MK fill:#a855f7,color:#fff,stroke:#9333ea,stroke-width:2px
+    style EN fill:#eab308,color:#000,stroke:#ca8a04,stroke-width:2px
+    style U fill:#1a1a24,color:#fafafa,stroke:#3f3f46,stroke-width:2px
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Flujo de Delegacion</h2>
+            <div class="diagram-card">
+                <div class="mermaid">
+flowchart TB
+    subgraph Top[" "]
+        direction LR
+        USER["Usuario"]
+        PT["pepe_la_tiza"]
+    end
+    
+    subgraph Warmup["Warmup"]
+        MK1["memory-keeper"]
+        EN["Engram"]
+    end
+    
+    subgraph Plan["Planificacion"]
+        PL["planner"]
+        TD["todo.md"]
+    end
+    
+    subgraph Exec["Ejecucion"]
+        BU["builder"]
+        CODE["Codigo"]
+        TEST["Tests"]
+    end
+    
+    subgraph Quality["Calidad"]
+        VE["verifier"]
+    end
+    
+    subgraph Review["Revision"]
+        JE["jester"]
+    end
+    
+    subgraph End["Guardar"]
+        MK2["memory-keeper"]
+        LM["lessons.md"]
+    end
+    
+    USER -->|"hola"| PT
+    PT -->|"1. mem_search"| MK1
+    MK1 -->|"busca"| EN
+    EN -->|"lecciones"| MK1
+    MK1 -->|"contexto"| PT
+    PT -->|"saludo"| USER
+    
+    USER -->|"2. plan"| PT
+    PT -->|"delegate"| PL
+    PL -->|"crea"| TD
+    PL -->|"plan"| PT
+    PT -->|"presenta"| USER
+    
+    USER -->|"3. hazlo"| PT
+    PT -->|"delegate"| BU
+    BU -->|"escribe"| CODE
+    BU -->|"ejecuta"| TEST
+    BU -->|"reporta"| PT
+    
+    PT -->|"delegate"| VE
+    VE -->|"verifica"| TEST
+    VE -->|"resultado"| PT
+    
+    PT -->|"delegate"| JE
+    JE -->|"flags"| PT
+    
+    PT -->|"4. mem_save"| MK2
+    MK2 -->|"guarda"| EN
+    MK2 -->|"actualiza"| LM
+    PT -->|"listo"| USER
+    
+    style PT fill:#22c55e,color:#000,stroke:#16a34a,stroke-width:3px
+    style USER fill:#1a1a24,color:#fafafa,stroke:#3f3f46,stroke-width:2px
+    style MK1 fill:#a855f7,color:#fff,stroke:#9333ea
+    style MK2 fill:#a855f7,color:#fff,stroke:#9333ea
+    style EN fill:#eab308,color:#000,stroke:#ca8a04
+    style PL fill:#3b82f6,color:#fff,stroke:#2563eb
+    style BU fill:#ec4899,color:#fff,stroke:#db2777
+    style VE fill:#3b82f6,color:#fff,stroke:#2563eb
+    style JE fill:#eab308,color:#000,stroke:#ca8a04
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Herramientas por Agente</h2>
+            <div class="agent-grid">
+                <div class="agent-card main">
+                    <h3><span class="icon">🤹</span> pepe_la_tiza</h3>
+                    <p class="role">Agente principal - Orchestra el equipo</p>
+                    <div class="tools">
+                        <span class="active">delegate</span>
+                        <span class="active">delegation_list</span>
+                        <span class="active">delegation_read</span>
+                        <span class="active">todowrite</span>
+                        <span class="active">todoread</span>
+                    </div>
+                </div>
+                <div class="agent-card planner">
+                    <h3><span class="icon">📋</span> planner</h3>
+                    <p class="role">Planifica tareas - Nunca ejecuta codigo</p>
+                    <div class="tools">
+                        <span class="active">delegate</span>
+                        <span class="active">read</span>
+                        <span class="active">todowrite</span>
+                        <span class="active">todoread</span>
+                    </div>
+                </div>
+                <div class="agent-card builder">
+                    <h3><span class="icon">🔨</span> builder</h3>
+                    <p class="role">Implementa codigo - UNA tarea a la vez</p>
+                    <div class="tools">
+                        <span class="active">delegate</span>
+                        <span class="active">write</span>
+                        <span class="active">edit</span>
+                        <span class="active">bash</span>
+                        <span class="active">read</span>
+                    </div>
+                </div>
+                <div class="agent-card verifier">
+                    <h3><span class="icon">✅</span> verifier</h3>
+                    <p class="role">Verifica completitud - Solo lectura</p>
+                    <div class="tools">
+                        <span class="active">read</span>
+                        <span class="active">bash</span>
+                    </div>
+                </div>
+                <div class="agent-card jester">
+                    <h3><span class="icon">🎭</span> jester</h3>
+                    <p class="role">Cuestiona suposiciones - Abogado del diablo</p>
+                    <div class="tools">
+                        <span class="active">read</span>
+                    </div>
+                </div>
+                <div class="agent-card bug-fixer">
+                    <h3><span class="icon">🐛</span> bug-fixer</h3>
+                    <p class="role">Arregla bugs de forma autonoma</p>
+                    <div class="tools">
+                        <span class="active">delegate</span>
+                        <span class="active">write</span>
+                        <span class="active">edit</span>
+                        <span class="active">bash</span>
+                        <span class="active">read</span>
+                    </div>
+                </div>
+                <div class="agent-card memory">
+                    <h3><span class="icon">🧠</span> memory-keeper</h3>
+                    <p class="role">Guarda y recupera lecciones</p>
+                    <div class="tools">
+                        <span class="active">read</span>
+                        <span class="active">todowrite</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Estructura de Archivos</h2>
+            <div class="diagram-card">
+                <div class="file-tree">
+<span class="folder">📁 Pepe_la_tiza_repo/</span>
+<div class="nested">
+    <span class="folder">📁 .opencode/</span>
+    <div class="nested">
+        <span class="folder">📁 agents/</span>
+        <div class="nested">
+            <span class="file">📄 pepe_la_tiza.md</span>
+            <span class="file">📄 planner.md</span>
+            <span class="file">📄 builder.md</span>
+            <span class="file">📄 verifier.md</span>
+            <span class="file">📄 jester.md</span>
+            <span class="file">📄 bug-fixer.md</span>
+            <span class="file">📄 memory-keeper.md</span>
+        </div>
+        <span class="file">📄 agents.json</span>
+    </div>
+    <span class="folder">📁 bin/</span>
+    <div class="nested">
+        <span class="file">📄 workflow-status.py</span>
+        <span class="file">📄 install.py</span>
+    </div>
+    <span class="folder">📁 scripts/</span>
+    <div class="nested">
+        <span class="file">📄 test_pepe.py</span>
+    </div>
+    <span class="folder">📁 skills/python/</span>
+    <div class="nested">
+        <span class="file">📄 senior/SKILL.md</span>
+        <span class="file">📄 pyqt6/SKILL.md</span>
+        <span class="file">📄 pygame/SKILL.md</span>
+    </div>
+    <span class="folder">📁 templates/</span>
+    <div class="nested">
+        <span class="file">📄 todo-template.md</span>
+        <span class="file">📄 lessons-template.md</span>
+    </div>
+</div>
+<span class="file">📄 ARCHITECTURE.md</span>
+<span class="file">📄 README.md</span>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>Pepe_la_tiza v1.0 — Sello Gentleman de <a href="https://github.com/alanf" target="_blank">Alan Buscaglia</a></p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#22c55e',
+                primaryTextColor: '#fafafa',
+                primaryBorderColor: '#16a34a',
+                lineColor: '#52525b',
+                secondaryColor: '#3b82f6',
+                tertiaryColor: '#1a1a24',
+                background: '#12121a',
+                mainBkg: '#12121a',
+                nodeBorder: '#3f3f46',
+                clusterBkg: '#12121a',
+                clusterBorder: '#3f3f46',
+                titleColor: '#fafafa',
+                edgeLabelBackground: '#1a1a24',
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                padding: 20
+            }
+        });
+    </script>
+</body>
+</html>

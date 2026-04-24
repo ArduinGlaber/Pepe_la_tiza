@@ -1,0 +1,98 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ArduinGlaber/Pepe_la_tiza/main/.opencode-schema.json",
+  "agents": {
+    "pepe_la_tiza": {
+      "file": ".team/pepe_la_tiza.md",
+      "tools": {
+        "task": true,
+        "todowrite": false,
+        "todoread": false
+      },
+      "task_budget": 20,
+      "subagents": ["planner", "builder", "verifier", "jester", "bug-fixer", "memory-keeper"]
+    },
+    "planner": {
+      "file": ".team/planner.md",
+      "mode": "subagent",
+      "tools": {
+        "task": true,
+        "todowrite": true,
+        "todoread": true,
+        "read": true
+      },
+      "task_budget": 5,
+      "permission": {
+        "task": { "*": "deny", "jester": "allow", "builder": "allow" }
+      }
+    },
+    "builder": {
+      "file": ".team/builder.md",
+      "mode": "subagent",
+      "tools": {
+        "task": true,
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true
+      },
+      "task_budget": 5,
+      "permission": {
+        "task": { "*": "deny", "verifier": "allow", "bug-fixer": "allow", "planner": "allow" }
+      }
+    },
+    "verifier": {
+      "file": ".team/verifier.md",
+      "mode": "subagent",
+      "tools": {
+        "task": true,
+        "read": true,
+        "bash": true
+      },
+      "task_budget": 3,
+      "permission": {
+        "task": { "*": "deny", "builder": "allow", "planner": "allow" }
+      }
+    },
+    "jester": {
+      "file": ".team/jester.md",
+      "mode": "subagent",
+      "tools": {
+        "task": false,
+        "read": true
+      },
+      "task_budget": 0,
+      "permission": {
+        "task": { "*": "deny" }
+      }
+    },
+    "bug-fixer": {
+      "file": ".team/bug-fixer.md",
+      "mode": "subagent",
+      "tools": {
+        "task": true,
+        "write": true,
+        "edit": true,
+        "read": true,
+        "bash": true,
+        "grep": true
+      },
+      "task_budget": 10,
+      "permission": {
+        "task": { "*": "deny", "planner": "allow", "verifier": "allow" }
+      }
+    },
+    "memory-keeper": {
+      "file": ".team/memory-keeper.md",
+      "mode": "subagent",
+      "tools": {
+        "task": false,
+        "read": true,
+        "todowrite": true
+      },
+      "task_budget": 0,
+      "permission": {
+        "task": { "*": "deny" }
+      }
+    }
+  }
+}
