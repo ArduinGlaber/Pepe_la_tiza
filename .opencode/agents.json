@@ -3,6 +3,7 @@
   "agents": {
     "pepe_la_tiza": {
       "file": ".team/pepe_la_tiza.md",
+      "mode": "agent",
       "tools": {
         "task": true,
         "todowrite": false,
