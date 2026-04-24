@@ -75,6 +75,22 @@ Pepe_la_tiza es un **meta-agente de IA** que actúa como tu único punto de cont
 
 ## Instalación (Release 1.0)
 
+### ⚠️ Importante: Bug de disponibilidad en dropdown
+
+Hay un **bug conocido en OpenCode 1.4.1** (#22130): cuando un agente está en `opencode.json`, OpenCode ignora su `mode` del archivo .md y lo muestra incorrectamente en el dropdown.
+
+**Solución automática:**
+
+El installer ya aplica el fix. Si ya tenías instalado Pepe_la_tiza y no aparece en el dropdown:
+
+```bash
+# Opción 1: Volver a instalar
+python bin/install.py
+
+# Opción 2: Fix manual
+# Eliminar la entrada de pepe_la_tiza de ~/.config/opencode/opencode.json
+```
+
 ### Opción 1: Python installer (recomendado, cross-platform)
 
 ```bash

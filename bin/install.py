@@ -74,6 +74,45 @@ def warn(msg: str) -> None:
     print(f"{C.YELLOW}⚠{C.RESET} {msg}")
 
 
+def apply_opencode_fix(config_dir: Path) -> None:
+    """
+    Aplica el fix para Bug #22130 de OpenCode.
+    
+    El bug: Cuando pepe_la_tiza está en opencode.json, OpenCode ignora
+    su mode del archivo .md y no aparece en el dropdown.
+    
+    Solución: Remover la entrada de pepe_la_tiza del JSON.
+    """
+    # Buscar opencode.json global
+    if is_windows():
+        opencode_json = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming")) / "opencode" / "opencode.json"
+    else:
+        opencode_json = Path.home() / ".opencode" / "opencode.json"
+    
+    if not opencode_json.exists():
+        return  # No hay configglobal
+    
+    try:
+        import json
+        with open(opencode_json, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        
+        # Verificar si pepe_la_tiza está en agent
+        if "agent" in config and "pepe_la_tiza" in config["agent"]:
+            step("Applying Bug #22130 fix...")
+            
+            # Remover la entrada de pepe_la_tiza
+            del config["agent"]["pepe_la_tiza"]
+            
+            # Guardar
+            with open(opencode_json, "w", encoding="utf-8") as f:
+                json.dump(config, f, indent=2)
+            
+            success("Fixed: pepe_la_tiza now loads from .md only")
+    except Exception as e:
+        warn(f"Could not apply fix: {e}")
+
+
 def install(skip_backup: bool = False) -> int:
     """Instala Pepe_la_tiza"""
     install_dir = Path(__file__).parent.parent.resolve()
@@ -162,6 +201,10 @@ def install(skip_backup: bool = False) -> int:
         step(f"Copying OpenCode config...")
         shutil.copy2(src_config, dst_config)
         success(f"OpenCode config")
+    
+    # 🔧 FIX: Bug #22130 - Remover pepe_la_tiza de opencode.json global
+    # El bug hace que mode: subagent sea ignorado cuando el agente está en JSON
+    apply_opencode_fix(config_dir)
     
     # Docs
     src_docs = install_dir / ".opencode" / "README.md"
